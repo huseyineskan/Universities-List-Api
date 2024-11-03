@@ -7,18 +7,26 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [data, setData] = useState("");
   const [country, setCountry] = useState("");
+  const [selectedUniversity, setSelectedUniversity] = useState("");
 
-  const getList = async () => {
+  const getUniversities = async () => {
     if (country) {
       const { data } = await axios.get(
         `http://universities.hipolabs.com/search?country=${country}`
       );
       setData(data);
-      console.log(data);
     }
   };
+
+  const getUniversityInfo = async (university) => {
+    const { data } = await axios.get(
+      `http://universities.hipolabs.com/search?name=${university}&country=${country}`
+    );
+    setSelectedUniversity(data);
+  };
+
   useEffect(() => {
-    getList();
+    getUniversities();
     setCountries(CL.countries);
   }, [country]);
 
@@ -45,7 +53,12 @@ function App() {
         <div className="form-group col-ms-12 col-md-6">
           <fieldset className="border p-2">
             <legend>Select University</legend>
-            <select className="form-control" id="name">
+            <select
+              className="form-control"
+              id="name"
+              onChange={(e) => getUniversityInfo(e.target.value)}
+            >
+              <option>Select university</option>
               {data ? (
                 data.map((university, i) => (
                   <option key={i} value={university.name}>
@@ -58,10 +71,41 @@ function App() {
             </select>
           </fieldset>
         </div>
-        <div className="col-ms-12">
-          <div>
-            <p>loading another infos...</p>
-          </div>
+      </div>
+      <div className="row">
+        <div className="col-ms-12 col-md-6">
+          <fieldset className="border p-2">
+            <legend>Domains</legend>
+            <ul>
+              {selectedUniversity ? (
+                selectedUniversity.map((item, i) => {
+                  if (item.domains[1]) {
+                    return item.domains.map((element, i) => (
+                      <li key={i}>
+                        <a href={`https://${element}`} key={i}>
+                          {element}
+                        </a>
+                      </li>
+                    ));
+                  } else {
+                    return (
+                      <li key={i}>
+                        <a
+                          target="_blank"
+                          href={`https://${item.domains[0]}`}
+                          key={i}
+                        >
+                          {item.domains[0]}
+                        </a>
+                      </li>
+                    );
+                  }
+                })
+              ) : (
+                <p>{selectedUniversity}</p>
+              )}
+            </ul>
+          </fieldset>
         </div>
       </div>
     </div>
