@@ -15,6 +15,7 @@ function App() {
         `http://universities.hipolabs.com/search?country=${country}`
       );
       setData(data);
+      setSelectedUniversity("");
     }
   };
 
@@ -76,21 +77,30 @@ function App() {
         <div className="col-ms-12 col-md-6">
           <fieldset className="border p-2">
             <legend>Domains</legend>
-            <ul>
+            <ul className="list-group">
               {selectedUniversity ? (
                 selectedUniversity.map((item, i) => {
                   if (item.domains[1]) {
                     return item.domains.map((element, i) => (
-                      <li key={i}>
-                        <a href={`https://${element}`} key={i}>
+                      <li className="list-group-item" key={i}>
+                        <a
+                          className="text-primary text-decoration-none"
+                          target="_blank"
+                          href={`https://${element}`}
+                          key={i}
+                        >
                           {element}
                         </a>
+                        {/* <a href={`${item.web_pages[i]}`} key={i}>
+                          {element}
+                        </a> */}
                       </li>
                     ));
                   } else {
                     return (
-                      <li key={i}>
+                      <li className="list-group-item" key={i}>
                         <a
+                          className="text-primary text-decoration-none"
                           target="_blank"
                           href={`https://${item.domains[0]}`}
                           key={i}
